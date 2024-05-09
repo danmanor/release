@@ -184,44 +184,45 @@ tests:
     test:
     - ref: assisted-baremetal-operator-catalog-publish
 - as: lint
+  skip_if_only_changed: ^dashboards/|^openshift/|^docs/|^sites/|\.md$|^(LICENSE|OWNERS|OWNERS_ALIASES)$
+  container:
+    from: assisted-service-lint
   commands: |
     export GOCACHE=/tmp/
     export GOLANGCI_LINT_CACHE=/tmp/.cache
     export GOPROXY=https://proxy.golang.org
     make lint
-  container:
-    from: assisted-service-lint
-  skip_if_only_changed: ^dashboards/|^openshift/|^docs/|^sites/|\.md$|^(LICENSE|OWNERS|OWNERS_ALIASES)$
 - as: verify-generated-code
   skip_if_only_changed: ^dashboards/|^openshift/|^docs/|^sites/|\.md$|^(LICENSE|OWNERS|OWNERS_ALIASES)$
   steps:
     test:
     - ref: assisted-verify-generated-code
 - as: unit-test
-  commands: |
-    export REPORTS=/tmp/reports
-    export CODECOV_TOKEN=$(cat /tmp/secret/codecov-token)
-    export GINKGO_REPORTFILE=${ARTIFACT_DIR}/junit_unit_test.xml
-    make ci-unit-test
-  container:
-    from: assisted-service-unit-test
-  secret:
-    mount_path: /tmp/secret
-    name: assisted-service-codecov-token
   skip_if_only_changed: ^dashboards/|^openshift/|^docs/|^sites/|\.md$|^(LICENSE|OWNERS|OWNERS_ALIASES)$
-- as: unit-test-postsubmit
+  container:
+    from: assisted-service-unit-test
+  secret:
+    mount_path: /tmp/secret
+    name: assisted-service-codecov-token
   commands: |
     export REPORTS=/tmp/reports
     export CODECOV_TOKEN=$(cat /tmp/secret/codecov-token)
     export GINKGO_REPORTFILE=${ARTIFACT_DIR}/junit_unit_test.xml
     make ci-unit-test
+- as: unit-test-postsubmit
+  postsubmit: true
   container:
     from: assisted-service-unit-test
-  postsubmit: true
   secret:
     mount_path: /tmp/secret
     name: assisted-service-codecov-token
+  commands: |
+    export REPORTS=/tmp/reports
+    export CODECOV_TOKEN=$(cat /tmp/secret/codecov-token)
+    export GINKGO_REPORTFILE=${ARTIFACT_DIR}/junit_unit_test.xml
+    make ci-unit-test
 - as: subsystem-aws
+  run_if_changed: ^(cmd/.*|deploy/.*|hack/.*|internal/.*|pkg/.*|tools/.*|subsystem/.*|Dockerfile\..*|Makefile|go\.mod|go\.sum|swagger.yaml)$
   cluster_claim:
     architecture: amd64
     cloud: aws
@@ -229,7 +230,6 @@ tests:
     product: ocp
     timeout: 1h0m0s
     version: "4.15"
-  run_if_changed: ^(cmd/.*|deploy/.*|hack/.*|internal/.*|pkg/.*|tools/.*|subsystem/.*|Dockerfile\..*|Makefile|go\.mod|go\.sum|swagger.yaml)$
   steps:
     allow_best_effort_post_steps: true
     test:
@@ -292,6 +292,7 @@ tests:
           memory: 200Mi
     workflow: generic-claim
 - as: subsystem-kubeapi-aws
+  run_if_changed: ^(cmd/.*|deploy/.*|hack/.*|internal/.*|pkg/.*|tools/.*|subsystem/.*|Dockerfile\..*|Makefile|go\.mod|go\.sum|swagger.yaml)$
   cluster_claim:
     architecture: amd64
     cloud: aws
@@ -299,7 +300,6 @@ tests:
     product: ocp
     timeout: 1h0m0s
     version: "4.15"
-  run_if_changed: ^(cmd/.*|deploy/.*|hack/.*|internal/.*|pkg/.*|tools/.*|subsystem/.*|Dockerfile\..*|Makefile|go\.mod|go\.sum|swagger.yaml)$
   steps:
     allow_best_effort_post_steps: true
     test:
@@ -384,8 +384,8 @@ tests:
       PACKET_PLAN: c3.medium.x86
     workflow: assisted-baremetal-operator-ztp
 - as: e2e-ai-operator-ztp-3masters
-  optional: true
   run_if_changed: ^(deploy/operator/.*)$
+  optional: true
   steps:
     cluster_profile: packet-assisted
     dependencies:
@@ -409,7 +409,6 @@ tests:
       NUM_EXTRA_WORKERS: "3"
     workflow: assisted-baremetal-operator-ztp
 - as: e2e-ai-operator-ztp-disconnected
-  optional: true
   run_if_changed: ^(deploy/operator/.*)$
   steps:
     cluster_profile: packet-assisted
@@ -432,7 +431,7 @@ tests:
       IP_STACK: v6
     workflow: assisted-baremetal-operator-ztp
 - as: e2e-ai-operator-ztp-compact-day2-workers
-  optional: true
+  run_if_changed: ^(deploy/operator/.*)$
   steps:
     cluster_profile: packet-assisted
     dependencies:
@@ -445,7 +444,7 @@ tests:
       NUM_EXTRA_WORKERS: "5"
     workflow: assisted-baremetal-operator-ztp
 - as: e2e-ai-operator-ztp-compact-day2-masters
-  optional: true
+  run_if_changed: ^(deploy/operator/.*)$
   steps:
     cluster_profile: packet-assisted
     dependencies:
@@ -459,7 +458,7 @@ tests:
       NUM_EXTRA_WORKERS: "4"
     workflow: assisted-baremetal-operator-ztp
 - as: e2e-ai-operator-ztp-sno-day2-workers
-  optional: true
+  run_if_changed: ^(deploy/operator/.*)$
   steps:
     cluster_profile: packet-assisted
     dependencies:
@@ -503,7 +502,7 @@ tests:
       NUM_EXTRA_WORKERS: "6"
     workflow: assisted-baremetal-operator-ztp
 - as: e2e-ai-operator-ztp-node-labels
-  optional: true
+  run_if_changed: ^(deploy/operator/.*)$
   steps:
     cluster_profile: packet-assisted
     dependencies:
@@ -521,7 +520,7 @@ tests:
       NUM_EXTRA_WORKERS: "6"
     workflow: assisted-baremetal-operator-ztp
 - as: e2e-ai-operator-ztp-sno-day2-workers-late-binding
-  optional: true
+  run_if_changed: ^(deploy/operator/.*)$
   steps:
     cluster_profile: packet-assisted
     dependencies:
@@ -563,7 +562,7 @@ tests:
       NUM_EXTRA_WORKERS: "2"
     workflow: assisted-baremetal-operator-ztp
 - as: e2e-ai-operator-ztp-sno-day2-masters
-  optional: true
+  run_if_changed: ^(deploy/operator/.*)$
   steps:
     cluster_profile: packet-assisted
     dependencies:
@@ -577,7 +576,6 @@ tests:
       NUM_EXTRA_WORKERS: "2"
     workflow: assisted-baremetal-operator-ztp
 - as: e2e-ai-operator-ztp-capi
-  optional: true
   run_if_changed: ^(deploy/operator/.*|api/.*|internal/controller/controllers/.*)$
   steps:
     cluster_profile: packet-assisted
@@ -597,9 +595,8 @@ tests:
       OPENSHIFT_INSTALL_RELEASE_IMAGE: release:latest
       PROVIDER_IMAGE: cluster-api-provider-agent
     workflow: assisted-baremetal-operator-capi
-- always_run: false
-  as: e2e-ai-operator-ztp-multiarch-3masters
-  optional: true
+- as: e2e-ai-operator-ztp-multiarch-3masters
+  run_if_changed: ^(deploy/operator/.*)$
   steps:
     cluster_profile: packet-assisted
     dependencies:
@@ -610,9 +607,8 @@ tests:
         SPOKE_CONTROLPLANE_AGENTS=3
       NUM_EXTRA_WORKERS: "3"
     workflow: assisted-baremetal-operator-ztp
-- always_run: false
-  as: e2e-ai-operator-ztp-multiarch-sno
-  optional: true
+- as: e2e-ai-operator-ztp-multiarch-sno
+  run_if_changed: ^(deploy/operator/.*)$
   steps:
     cluster_profile: packet-assisted
     dependencies:
@@ -623,9 +619,8 @@ tests:
         SPOKE_CONTROLPLANE_AGENTS=1
       NUM_EXTRA_WORKERS: "1"
     workflow: assisted-baremetal-operator-ztp
-- always_run: false
-  as: e2e-ai-operator-ztp-hypershift-zero-nodes
-  optional: true
+- as: e2e-ai-operator-ztp-hypershift-zero-nodes
+  run_if_changed: ^(deploy/operator/.*)$
   steps:
     cluster_profile: packet-assisted
     dependencies:

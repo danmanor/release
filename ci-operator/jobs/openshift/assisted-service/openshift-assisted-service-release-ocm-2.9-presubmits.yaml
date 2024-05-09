@@ -292,7 +292,6 @@ presubmits:
       job-release: "4.14"
       pj-rehearse.openshift.io/can-be-rehearsed: "true"
     name: pull-ci-openshift-assisted-service-release-ocm-2.9-e2e-ai-operator-ztp-capi
-    optional: true
     rerun_command: /test e2e-ai-operator-ztp-capi
     run_if_changed: ^(deploy/operator/.*|api/.*|internal/controller/controllers/.*)$
     spec:
@@ -373,8 +372,8 @@ presubmits:
       job-release: "4.14"
       pj-rehearse.openshift.io/can-be-rehearsed: "true"
     name: pull-ci-openshift-assisted-service-release-ocm-2.9-e2e-ai-operator-ztp-compact-day2-masters
-    optional: true
     rerun_command: /test e2e-ai-operator-ztp-compact-day2-masters
+    run_if_changed: ^(deploy/operator/.*)$
     spec:
       containers:
       - args:
@@ -453,8 +452,8 @@ presubmits:
       job-release: "4.14"
       pj-rehearse.openshift.io/can-be-rehearsed: "true"
     name: pull-ci-openshift-assisted-service-release-ocm-2.9-e2e-ai-operator-ztp-compact-day2-workers
-    optional: true
     rerun_command: /test e2e-ai-operator-ztp-compact-day2-workers
+    run_if_changed: ^(deploy/operator/.*)$
     spec:
       containers:
       - args:
@@ -533,7 +532,6 @@ presubmits:
       job-release: "4.14"
       pj-rehearse.openshift.io/can-be-rehearsed: "true"
     name: pull-ci-openshift-assisted-service-release-ocm-2.9-e2e-ai-operator-ztp-disconnected
-    optional: true
     rerun_command: /test e2e-ai-operator-ztp-disconnected
     run_if_changed: ^(deploy/operator/.*)$
     spec:
@@ -614,8 +612,8 @@ presubmits:
       job-release: "4.14"
       pj-rehearse.openshift.io/can-be-rehearsed: "true"
     name: pull-ci-openshift-assisted-service-release-ocm-2.9-e2e-ai-operator-ztp-hypershift-zero-nodes
-    optional: true
     rerun_command: /test e2e-ai-operator-ztp-hypershift-zero-nodes
+    run_if_changed: ^(deploy/operator/.*)$
     spec:
       containers:
       - args:
@@ -694,8 +692,8 @@ presubmits:
       job-release: "4.14"
       pj-rehearse.openshift.io/can-be-rehearsed: "true"
     name: pull-ci-openshift-assisted-service-release-ocm-2.9-e2e-ai-operator-ztp-multiarch-3masters
-    optional: true
     rerun_command: /test e2e-ai-operator-ztp-multiarch-3masters
+    run_if_changed: ^(deploy/operator/.*)$
     spec:
       containers:
       - args:
@@ -774,8 +772,8 @@ presubmits:
       job-release: "4.14"
       pj-rehearse.openshift.io/can-be-rehearsed: "true"
     name: pull-ci-openshift-assisted-service-release-ocm-2.9-e2e-ai-operator-ztp-multiarch-sno
-    optional: true
     rerun_command: /test e2e-ai-operator-ztp-multiarch-sno
+    run_if_changed: ^(deploy/operator/.*)$
     spec:
       containers:
       - args:
@@ -854,8 +852,8 @@ presubmits:
       job-release: "4.14"
       pj-rehearse.openshift.io/can-be-rehearsed: "true"
     name: pull-ci-openshift-assisted-service-release-ocm-2.9-e2e-ai-operator-ztp-node-labels
-    optional: true
     rerun_command: /test e2e-ai-operator-ztp-node-labels
+    run_if_changed: ^(deploy/operator/.*)$
     spec:
       containers:
       - args:
@@ -934,8 +932,8 @@ presubmits:
       job-release: "4.14"
       pj-rehearse.openshift.io/can-be-rehearsed: "true"
     name: pull-ci-openshift-assisted-service-release-ocm-2.9-e2e-ai-operator-ztp-sno-day2-masters
-    optional: true
     rerun_command: /test e2e-ai-operator-ztp-sno-day2-masters
+    run_if_changed: ^(deploy/operator/.*)$
     spec:
       containers:
       - args:
@@ -1014,8 +1012,8 @@ presubmits:
       job-release: "4.14"
       pj-rehearse.openshift.io/can-be-rehearsed: "true"
     name: pull-ci-openshift-assisted-service-release-ocm-2.9-e2e-ai-operator-ztp-sno-day2-workers
-    optional: true
     rerun_command: /test e2e-ai-operator-ztp-sno-day2-workers
+    run_if_changed: ^(deploy/operator/.*)$
     spec:
       containers:
       - args:
@@ -1174,8 +1172,8 @@ presubmits:
       job-release: "4.14"
       pj-rehearse.openshift.io/can-be-rehearsed: "true"
     name: pull-ci-openshift-assisted-service-release-ocm-2.9-e2e-ai-operator-ztp-sno-day2-workers-late-binding
-    optional: true
     rerun_command: /test e2e-ai-operator-ztp-sno-day2-workers-late-binding
+    run_if_changed: ^(deploy/operator/.*)$
     spec:
       containers:
       - args:

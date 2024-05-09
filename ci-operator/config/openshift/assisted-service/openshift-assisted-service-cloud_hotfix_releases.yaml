@@ -88,28 +88,29 @@ tests:
     test:
     - ref: assisted-baremetal-images-publish
 - as: lint
-  commands: export GOLANGCI_LINT_CACHE=/tmp/.cache && export GOPROXY=https://proxy.golang.org
-    && make lint
   container:
     from: assisted-service-lint
+  commands: export GOLANGCI_LINT_CACHE=/tmp/.cache && export GOPROXY=https://proxy.golang.org
+    && make lint
 - as: unit-test
-  commands: |
-    export REPORTS=/tmp/reports
-    export CODECOV_TOKEN=$(cat /tmp/secret/codecov-token)
-    export GINKGO_REPORTFILE=/tmp/junit_unit_test.xml
-    make ci-unit-test
+  skip_if_only_changed: ^dashboards/|^openshift/|^docs/|^sites/|\.md$|^(LICENSE|OWNERS|OWNERS_ALIASES)$
   container:
     from: assisted-service-unit-test
   secret:
     mount_path: /tmp/secret
     name: assisted-service-codecov-token
-  skip_if_only_changed: ^dashboards/|^openshift/|^docs/|^sites/|\.md$|^(LICENSE|OWNERS|OWNERS_ALIASES)$
+  commands: |
+    export REPORTS=/tmp/reports
+    export CODECOV_TOKEN=$(cat /tmp/secret/codecov-token)
+    export GINKGO_REPORTFILE=/tmp/junit_unit_test.xml
+    make ci-unit-test
 - as: verify-generated-code
   skip_if_only_changed: ^dashboards/|^openshift/|^docs/|^sites/|\.md$|^(LICENSE|OWNERS|OWNERS_ALIASES)$
   steps:
     test:
     - ref: assisted-verify-generated-code
 - as: subsystem-aws
+  run_if_changed: ^(cmd/.*|deploy/.*|hack/.*|internal/.*|pkg/.*|tools/.*|subsystem/.*|Dockerfile\..*|Makefile|go\.mod|go\.sum|swagger.yaml)$
   cluster_claim:
     architecture: amd64
     cloud: aws
@@ -117,7 +118,6 @@ tests:
     product: ocp
     timeout: 1h0m0s
     version: "4.15"
-  run_if_changed: ^(cmd/.*|deploy/.*|hack/.*|internal/.*|pkg/.*|tools/.*|subsystem/.*|Dockerfile\..*|Makefile|go\.mod|go\.sum|swagger.yaml)$
   steps:
     test:
     - as: subsystem-deploy-and-run
@@ -142,6 +142,7 @@ tests:
           memory: 200Mi
     workflow: generic-claim
 - as: e2e-metal-assisted-single-node
+  skip_if_only_changed: ^dashboards/|^openshift/|^docs/|^sites/|\.md$|^(LICENSE|OWNERS|OWNERS_ALIASES)$
   steps:
     cluster_profile: packet-assisted
     env:
@@ -150,6 +151,7 @@ tests:
         NUM_MASTERS=1
     workflow: assisted-baremetal
 - as: e2e-metal-assisted-onprem
+  skip_if_only_changed: ^dashboards/|^openshift/|^docs/|^sites/|\.md$|^(LICENSE|OWNERS|OWNERS_ALIASES)$
   steps:
     cluster_profile: packet-assisted
     env:
@@ -158,6 +160,7 @@ tests:
         DEPLOY_TARGET=onprem
     workflow: assisted-baremetal
 - as: e2e-metal-assisted-day2
+  skip_if_only_changed: ^dashboards/|^openshift/|^docs/|^sites/|\.md$|^(LICENSE|OWNERS|OWNERS_ALIASES)$
   steps:
     cluster_profile: packet-assisted
     env:
@@ -166,6 +169,7 @@ tests:
         TEST_FUNC=test_deploy_day2_nodes_cloud
     workflow: assisted-baremetal
 - as: e2e-metal-assisted-ipv4v6
+  skip_if_only_changed: ^dashboards/|^openshift/|^docs/|^sites/|\.md$|^(LICENSE|OWNERS|OWNERS_ALIASES)$
   steps:
     cluster_profile: packet-assisted
     env:
@@ -174,15 +178,9 @@ tests:
         IPv6=yes
         IPv4=yes
     workflow: assisted-baremetal
-- as: e2e-metal-assisted-4-11
-  steps:
-    cluster_profile: packet-assisted
-    env:
-      ASSISTED_CONFIG: |
-        SERVICE_BASE_REF=cloud_hotfix_releases
-        OPENSHIFT_VERSION=4.11
-    workflow: assisted-baremetal
 - as: e2e-metal-assisted-4-12
+  always_run: false
+  optional: true
   steps:
     cluster_profile: packet-assisted
     env:
@@ -191,6 +189,7 @@ tests:
         OPENSHIFT_VERSION=4.12
     workflow: assisted-baremetal
 - as: e2e-metal-assisted-4-13
+  always_run: false
   optional: true
   steps:
     cluster_profile: packet-assisted
@@ -199,8 +198,8 @@ tests:
         SERVICE_BASE_REF=cloud_hotfix_releases
         OPENSHIFT_VERSION=4.13
     workflow: assisted-baremetal
-- always_run: false
-  as: e2e-metal-assisted-4-14
+- as: e2e-metal-assisted-4-14
+  always_run: false
   optional: true
   steps:
     cluster_profile: packet-assisted
@@ -209,8 +208,8 @@ tests:
         SERVICE_BASE_REF=cloud_hotfix_releases
         OPENSHIFT_VERSION=4.14
     workflow: assisted-baremetal
-- always_run: false
-  as: e2e-metal-assisted-4-15
+- as: e2e-metal-assisted-4-15
+  always_run: false
   optional: true
   steps:
     cluster_profile: packet-assisted
@@ -220,6 +219,7 @@ tests:
         OPENSHIFT_VERSION=4.15
     workflow: assisted-baremetal
 - as: e2e-metal-assisted-static-ip-suite
+  skip_if_only_changed: ^dashboards/|^openshift/|^docs/|^sites/|\.md$|^(LICENSE|OWNERS|OWNERS_ALIASES)$
   steps:
     cluster_profile: packet-assisted
     env:
